@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WealthSummary.Api.Application.Dtos;
 using WealthSummary.Api.Application.Mappers;
+using WealthSummary.Domain.Model;
 using WealthSummary.Domain.Repositories;
 
 namespace WealthSummary.Api.Controllers
@@ -17,14 +18,14 @@ namespace WealthSummary.Api.Controllers
         }
 
         [HttpGet("{clientId}")]
-        public async Task<ActionResult<ClientResponse>> GetClient(int clientId, CancellationToken cancellationToken)
+        public async Task<ActionResult<Client>> GetClient(int clientId, CancellationToken cancellationToken)
         {
             var client = await _clientRepository.GetByIdAsync(clientId);
             if (client == null)
             {
                 return NotFound();
             }
-            return Ok(ClientMapper.Map(client));
+            return Ok(client);
 }
     }
 }

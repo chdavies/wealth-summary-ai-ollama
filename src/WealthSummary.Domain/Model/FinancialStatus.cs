@@ -12,5 +12,4 @@ public class FinancialStatus
 
     public RiskAppetite RiskAppetite { get; set; } 
 
-    public string? Goals { get; set; } // e.g., "Retire at 60; fund children's college"
 }

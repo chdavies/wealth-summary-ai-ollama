@@ -14,11 +14,17 @@ public class WealthDbContext : DbContext
 
     public DbSet<Client> Clients { get; set; }
 
+    public DbSet<FinancialGoal> FinancialGoals { get; set; }
+
     public DbSet<FinancialStatus> FinancialStatuses { get; set; }
 
     public DbSet<Liability> Liabilities { get; set; }
 
     public DbSet<MeetingNote> MeetingNotes { get; set; }
+
+    public DbSet<Pension> Pensions { get; set; }
+
+
 
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)

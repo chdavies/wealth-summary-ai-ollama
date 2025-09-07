@@ -12,23 +12,14 @@ static class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Bind configuration
-        var ollamaConfig = builder.Configuration.GetSection("Ollama");
-        var baseUrl = ollamaConfig.GetValue<string>("BaseUrl") ?? "http://localhost:11434";
-
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddOpenApi();
 
-        // HttpClient for Ollama
-        builder.Services.AddHttpClient<OllamaClient>(client =>
-        {
-            client.BaseAddress = new Uri(baseUrl);
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        });
+       
 
-        builder.Services.AddServices();
+        builder.Services.AddServices(builder.Configuration);
         builder.Services.AddInfrastructure(builder.Configuration);
 
         var app = builder.Build();

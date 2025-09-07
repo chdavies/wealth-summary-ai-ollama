@@ -21,7 +21,8 @@ namespace WealthSummary.Infrastructure.Migrations
                 {
                     ClientId = table.Column<int>(type: "int", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MaritalStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -53,6 +54,29 @@ namespace WealthSummary.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FinancialGoals",
+                schema: "main",
+                columns: table => new
+                {
+                    FinancialGoalId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    TargetDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FinancialGoals", x => x.FinancialGoalId);
+                    table.ForeignKey(
+                        name: "FK_FinancialGoals_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "main",
+                        principalTable: "Clients",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FinancialStatuses",
                 schema: "main",
                 columns: table => new
@@ -62,8 +86,7 @@ namespace WealthSummary.Infrastructure.Migrations
                     ClientId = table.Column<int>(type: "int", nullable: false),
                     AnnualIncome = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     AnnualExpenses = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    RiskAppetite = table.Column<int>(type: "int", nullable: false),
-                    Goals = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
+                    RiskAppetite = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -126,10 +149,39 @@ namespace WealthSummary.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Pensions",
+                schema: "main",
+                columns: table => new
+                {
+                    PensionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pensions", x => x.PensionId);
+                    table.ForeignKey(
+                        name: "FK_Pensions_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "main",
+                        principalTable: "Clients",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Assets_ClientId",
                 schema: "main",
                 table: "Assets",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FinancialGoals_ClientId",
+                schema: "main",
+                table: "FinancialGoals",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
@@ -149,6 +201,12 @@ namespace WealthSummary.Infrastructure.Migrations
                 schema: "main",
                 table: "MeetingNotes",
                 column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pensions_ClientId",
+                schema: "main",
+                table: "Pensions",
+                column: "ClientId");
         }
 
         /// <inheritdoc />
@@ -156,6 +214,10 @@ namespace WealthSummary.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Assets",
+                schema: "main");
+
+            migrationBuilder.DropTable(
+                name: "FinancialGoals",
                 schema: "main");
 
             migrationBuilder.DropTable(
@@ -168,6 +230,10 @@ namespace WealthSummary.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "MeetingNotes",
+                schema: "main");
+
+            migrationBuilder.DropTable(
+                name: "Pensions",
                 schema: "main");
 
             migrationBuilder.DropTable(

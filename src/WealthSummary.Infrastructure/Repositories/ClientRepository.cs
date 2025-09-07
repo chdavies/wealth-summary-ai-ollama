@@ -21,8 +21,10 @@ internal class ClientRepository : IClientRepository
     {
         return await _context.Clients
             .Include(p => p.Assets)
+            .Include(p => p.Pensions)
             .Include(p => p.Liabilities)
             .Include(p => p.FinancialStatuses)
+            .Include(p => p.FinancialGoals)
             .Include(p => p.MeetingNotes)
             .FirstOrDefaultAsync(c => c.ClientId == clientId);
 

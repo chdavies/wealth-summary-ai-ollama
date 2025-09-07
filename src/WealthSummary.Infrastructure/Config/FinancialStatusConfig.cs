@@ -25,10 +25,6 @@ public class FinancialStatusConfig : IEntityTypeConfiguration<FinancialStatus>
         builder.Property(fs => fs.RiskAppetite)
             .IsRequired();
 
-        builder.Property(l => l.Goals)
-            .IsRequired()
-            .HasMaxLength(1000);
-
         builder.HasOne<Client>()
             .WithMany(c => c.FinancialStatuses)
             .HasForeignKey(fs => fs.ClientId)

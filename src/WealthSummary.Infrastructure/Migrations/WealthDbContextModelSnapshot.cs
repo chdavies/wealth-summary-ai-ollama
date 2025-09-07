@@ -65,9 +65,38 @@ namespace WealthSummary.Infrastructure.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<int>("MaritalStatus")
+                        .HasColumnType("int");
+
                     b.HasKey("ClientId");
 
                     b.ToTable("Clients", "main");
+                });
+
+            modelBuilder.Entity("WealthSummary.Domain.Model.FinancialGoal", b =>
+                {
+                    b.Property<int>("FinancialGoalId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FinancialGoalId"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("TargetDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("FinancialGoalId");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("FinancialGoals", "main");
                 });
 
             modelBuilder.Entity("WealthSummary.Domain.Model.FinancialStatus", b =>
@@ -86,11 +115,6 @@ namespace WealthSummary.Infrastructure.Migrations
 
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Goals")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<int>("RiskAppetite")
                         .HasColumnType("int");
@@ -166,10 +190,45 @@ namespace WealthSummary.Infrastructure.Migrations
                     b.ToTable("MeetingNotes", "main");
                 });
 
+            modelBuilder.Entity("WealthSummary.Domain.Model.Pension", b =>
+                {
+                    b.Property<int>("PensionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PensionId"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("PensionId");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("Pensions", "main");
+                });
+
             modelBuilder.Entity("WealthSummary.Domain.Model.Asset", b =>
                 {
                     b.HasOne("WealthSummary.Domain.Model.Client", null)
                         .WithMany("Assets")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WealthSummary.Domain.Model.FinancialGoal", b =>
+                {
+                    b.HasOne("WealthSummary.Domain.Model.Client", null)
+                        .WithMany("FinancialGoals")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -202,15 +261,28 @@ namespace WealthSummary.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WealthSummary.Domain.Model.Pension", b =>
+                {
+                    b.HasOne("WealthSummary.Domain.Model.Client", null)
+                        .WithMany("Pensions")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("WealthSummary.Domain.Model.Client", b =>
                 {
                     b.Navigation("Assets");
+
+                    b.Navigation("FinancialGoals");
 
                     b.Navigation("FinancialStatuses");
 
                     b.Navigation("Liabilities");
 
                     b.Navigation("MeetingNotes");
+
+                    b.Navigation("Pensions");
                 });
 #pragma warning restore 612, 618
         }
