@@ -3,10 +3,12 @@ import {
   Box,
   Container,
   Heading,
-  Stack,
-  Flex,
+  VStack,
+  HStack,
   Input,
   Button,
+  Alert,
+  AlertIcon,
   Text,
   Spinner,
 } from '@chakra-ui/react';
@@ -21,9 +23,6 @@ function App() {
   const [summary, setSummary] = useState<ClientSummary | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const bgColor = 'gray.50';
-  const cardBg = 'white';
 
   const handleSearch = async () => {
     if (!clientId || isNaN(Number(clientId))) {
@@ -58,9 +57,9 @@ function App() {
   };
 
   return (
-    <Box bg={bgColor} minH="100vh" py={8}>
+    <Box bg="gray.50" minH="100vh" py={8}>
       <Container maxW="1200px">
-        <Stack gap={8}>
+        <VStack spacing={8} align="stretch">
           {/* Header */}
           <Box textAlign="center">
             <Heading size="xl" color="blue.600" mb={2}>
@@ -72,10 +71,10 @@ function App() {
           </Box>
 
           {/* Search Controls */}
-          <Box bg={cardBg} p={6} borderRadius="lg" shadow="md">
-            <Stack gap={4}>
+          <Box bg="white" p={6} borderRadius="lg" shadow="md">
+            <VStack spacing={4} align="stretch">
               <Heading size="md">Search Client</Heading>
-              <Flex gap={4}>
+              <HStack>
                 <Input
                   placeholder="Enter Client ID"
                   value={clientId}
@@ -86,29 +85,29 @@ function App() {
                 <Button
                   colorScheme="blue"
                   onClick={handleSearch}
-                  loading={loading}
+                  isLoading={loading}
+                  loadingText="Loading..."
                   size="lg"
                   minW="120px"
                 >
-                  {loading ? 'Loading...' : 'Search'}
+                  Search
                 </Button>
-              </Flex>
-            </Stack>
+              </HStack>
+            </VStack>
           </Box>
 
           {/* Error Display */}
           {error && (
-            <Box bg="red.50" border="1px" borderColor="red.200" borderRadius="lg" p={4}>
-              <Text color="red.600" fontWeight="medium">
-                {error}
-              </Text>
-            </Box>
+            <Alert status="error" borderRadius="lg">
+              <AlertIcon />
+              {error}
+            </Alert>
           )}
 
           {/* Loading Spinner */}
           {loading && (
             <Box textAlign="center" py={8}>
-              <Spinner size="xl" color="blue.500" />
+              <Spinner size="xl" color="blue.500" thickness="4px" />
               <Text mt={4} color="gray.600">
                 Generating AI wealth summary...
               </Text>
@@ -117,12 +116,12 @@ function App() {
 
           {/* Content */}
           {client && !loading && (
-            <Stack gap={6}>
+            <VStack spacing={6} align="stretch">
               <ClientInfo client={client} />
               {summary && <WealthSummary summary={summary} />}
-            </Stack>
+            </VStack>
           )}
-        </Stack>
+        </VStack>
       </Container>
     </Box>
   );

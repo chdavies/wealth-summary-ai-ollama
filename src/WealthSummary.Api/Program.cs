@@ -16,6 +16,17 @@ static class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+        // Add CORS
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowReactApp", policy =>
+            {
+                policy.WithOrigins("http://localhost:3000")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+        });
+
        
 
         builder.Services.AddServices(builder.Configuration);
@@ -33,6 +44,9 @@ static class Program
         }
 
         app.UseHttpsRedirection();
+        
+        // Enable CORS
+        app.UseCors("AllowReactApp");
 
         app.UseAuthorization();
         app.UseRouting();

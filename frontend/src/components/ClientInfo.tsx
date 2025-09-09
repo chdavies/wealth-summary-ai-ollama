@@ -5,9 +5,14 @@ import {
   Text,
   Grid,
   GridItem,
-  Stack,
-  Flex,
+  VStack,
+  HStack,
   Badge,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  Divider,
 } from '@chakra-ui/react';
 import { Client } from '../types/api';
 
@@ -16,9 +21,6 @@ interface ClientInfoProps {
 }
 
 const ClientInfo: React.FC<ClientInfoProps> = ({ client }) => {
-  const cardBg = 'white';
-  const borderColor = 'gray.200';
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -53,26 +55,26 @@ const ClientInfo: React.FC<ClientInfoProps> = ({ client }) => {
   const totalPensions = client.pensions?.reduce((sum, pension) => sum + pension.currentValue, 0) || 0;
 
   return (
-    <Box bg={cardBg} shadow="lg" borderRadius="lg" p={6}>
-      <Stack gap={6}>
-        <Flex justify="space-between" align="center">
-          <Stack gap={1}>
+    <Box bg="white" shadow="lg" borderRadius="lg" p={6}>
+      <VStack spacing={6} align="stretch">
+        <HStack justify="space-between" align="center">
+          <VStack align="start" spacing={1}>
             <Heading size="lg" color="blue.600">
               {client.name}
             </Heading>
             <Text color="gray.600" fontSize="md">
               Client ID: {client.clientId}
             </Text>
-          </Stack>
-          <Stack gap={1} align="end">
+          </VStack>
+          <VStack align="end" spacing={1}>
             <Badge colorScheme="blue" fontSize="sm" px={3} py={1}>
               Age: {calculateAge(client.dateOfBirth)}
             </Badge>
             <Text fontSize="sm" color="gray.500">
               Born: {formatDate(client.dateOfBirth)}
             </Text>
-          </Stack>
-        </Flex>
+          </VStack>
+        </HStack>
 
         <Box>
           <Heading size="md" mb={4} color="gray.700">
@@ -80,99 +82,105 @@ const ClientInfo: React.FC<ClientInfoProps> = ({ client }) => {
           </Heading>
           <Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap={4}>
             <GridItem>
-              <Box p={4} bg="blue.50" borderRadius="md" textAlign="center">
-                <Text fontSize="sm" color="gray.600" mb={1}>Total Assets</Text>
-                <Text fontSize="2xl" fontWeight="bold" color="green.500">{formatCurrency(totalAssets)}</Text>
-                <Text fontSize="xs" color="gray.500">{client.assets?.length || 0} assets</Text>
-              </Box>
+              <Stat p={4} bg="blue.50" borderRadius="md">
+                <StatLabel>Total Assets</StatLabel>
+                <StatNumber color="green.500">{formatCurrency(totalAssets)}</StatNumber>
+                <StatHelpText>{client.assets?.length || 0} assets</StatHelpText>
+              </Stat>
             </GridItem>
             <GridItem>
-              <Box p={4} bg="red.50" borderRadius="md" textAlign="center">
-                <Text fontSize="sm" color="gray.600" mb={1}>Total Liabilities</Text>
-                <Text fontSize="2xl" fontWeight="bold" color="red.500">{formatCurrency(totalLiabilities)}</Text>
-                <Text fontSize="xs" color="gray.500">{client.liabilities?.length || 0} liabilities</Text>
-              </Box>
+              <Stat p={4} bg="red.50" borderRadius="md">
+                <StatLabel>Total Liabilities</StatLabel>
+                <StatNumber color="red.500">{formatCurrency(totalLiabilities)}</StatNumber>
+                <StatHelpText>{client.liabilities?.length || 0} liabilities</StatHelpText>
+              </Stat>
             </GridItem>
             <GridItem>
-              <Box p={4} bg="green.50" borderRadius="md" textAlign="center">
-                <Text fontSize="sm" color="gray.600" mb={1}>Net Worth</Text>
-                <Text fontSize="2xl" fontWeight="bold" color={netWorth >= 0 ? 'green.500' : 'red.500'}>
+              <Stat p={4} bg="green.50" borderRadius="md">
+                <StatLabel>Net Worth</StatLabel>
+                <StatNumber color={netWorth >= 0 ? 'green.500' : 'red.500'}>
                   {formatCurrency(netWorth)}
-                </Text>
-                <Text fontSize="xs" color="gray.500">Assets - Liabilities</Text>
-              </Box>
+                </StatNumber>
+                <StatHelpText>Assets - Liabilities</StatHelpText>
+              </Stat>
             </GridItem>
             <GridItem>
-              <Box p={4} bg="purple.50" borderRadius="md" textAlign="center">
-                <Text fontSize="sm" color="gray.600" mb={1}>Pension Value</Text>
-                <Text fontSize="2xl" fontWeight="bold" color="purple.500">{formatCurrency(totalPensions)}</Text>
-                <Text fontSize="xs" color="gray.500">{client.pensions?.length || 0} pensions</Text>
-              </Box>
+              <Stat p={4} bg="purple.50" borderRadius="md">
+                <StatLabel>Pension Value</StatLabel>
+                <StatNumber color="purple.500">{formatCurrency(totalPensions)}</StatNumber>
+                <StatHelpText>{client.pensions?.length || 0} pensions</StatHelpText>
+              </Stat>
             </GridItem>
           </Grid>
         </Box>
 
         {client.financialGoals && client.financialGoals.length > 0 && (
-          <Box>
-            <Heading size="md" mb={4} color="gray.700">
-              Financial Goals
-            </Heading>
-            <Stack gap={3}>
-              {client.financialGoals.map((goal) => (
-                <Box
-                  key={goal.financialGoalId}
-                  p={4}
-                  border="1px"
-                  borderColor={borderColor}
-                  borderRadius="md"
-                >
-                  <Flex justify="space-between" align="start">
-                    <Stack gap={1}>
-                      <Text fontWeight="medium">{goal.description}</Text>
-                      <Text fontSize="sm" color="gray.500">
-                        Target Date: {formatDate(goal.targetDate)}
-                      </Text>
-                    </Stack>
-                    {goal.targetAmount && (
-                      <Badge colorScheme="green" fontSize="sm">
-                        {formatCurrency(goal.targetAmount)}
-                      </Badge>
-                    )}
-                  </Flex>
-                </Box>
-              ))}
-            </Stack>
-          </Box>
+          <>
+            <Divider />
+            <Box>
+              <Heading size="md" mb={4} color="gray.700">
+                Financial Goals
+              </Heading>
+              <VStack spacing={3} align="stretch">
+                {client.financialGoals.map((goal) => (
+                  <Box
+                    key={goal.financialGoalId}
+                    p={4}
+                    border="1px"
+                    borderColor="gray.200"
+                    borderRadius="md"
+                  >
+                    <HStack justify="space-between" align="start">
+                      <VStack align="start" spacing={1}>
+                        <Text fontWeight="medium">{goal.description}</Text>
+                        <Text fontSize="sm" color="gray.500">
+                          Target Date: {formatDate(goal.targetDate)}
+                        </Text>
+                      </VStack>
+                      {goal.targetAmount && (
+                        <Badge colorScheme="green" fontSize="sm">
+                          {formatCurrency(goal.targetAmount)}
+                        </Badge>
+                      )}
+                    </HStack>
+                  </Box>
+                ))}
+              </VStack>
+            </Box>
+          </>
         )}
 
         {client.meetingNotes && client.meetingNotes.length > 0 && (
-          <Box>
-            <Heading size="md" mb={4} color="gray.700">
-              Latest Meeting Note
-            </Heading>
-            {client.meetingNotes.slice(0, 1).map((note) => (
-              <Box
-                key={note.meetingNoteId}
-                p={4}
-                bg="gray.50"
-                borderRadius="md"
-              >
-                <Flex justify="space-between" mb={2}>
-                  <Text fontWeight="medium" color="gray.700">
-                    {note.author || 'Advisor'}
+          <>
+            <Divider />
+            <Box>
+              <Heading size="md" mb={4} color="gray.700">
+                Latest Meeting Note
+              </Heading>
+              {client.meetingNotes.slice(0, 1).map((note) => (
+                <Box
+                  key={note.meetingNoteId}
+                  p={4}
+                  bg="gray.50"
+                  borderRadius="md"
+                >
+                  <HStack justify="space-between" mb={2}>
+                    <Text fontWeight="medium" color="gray.700">
+                      {note.author || 'Advisor'}
+                    </Text>
+                    <Text fontSize="sm" color="gray.500">
+                      {formatDate(note.meetingDate)}
+                    </Text>
+                  </HStack>
+                  <Text fontSize="sm" color="gray.600">
+                    {note.notes || 'No notes available'}
                   </Text>
-                  <Text fontSize="sm" color="gray.500">
-                    {formatDate(note.meetingDate)}
-                  </Text>
-                </Flex>
-                <Text fontSize="sm" color="gray.600">
-                  {note.notes || 'No notes available'}
-                </Text>
-              </Box>
-            ))}
-          </Box>
+                </Box>
+              ))}
+            </Box>
+          </>
         )}
-      </Stack>
+      </VStack>
     </Box>
   );
 };
