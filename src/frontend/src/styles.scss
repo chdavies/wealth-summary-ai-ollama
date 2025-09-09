@@ -1,0 +1,32 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$wealth-primary: mat.m2-define-palette(mat.$m2-blue-palette);
+$wealth-accent: mat.m2-define-palette(mat.$m2-green-palette);
+$wealth-warn: mat.m2-define-palette(mat.$m2-red-palette);
+
+$wealth-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $wealth-primary,
+    accent: $wealth-accent,
+    warn: $wealth-warn,
+  ),
+  typography: mat.m2-define-typography-config(),
+  density: 0,
+));
+
+@include mat.all-component-themes($wealth-theme);
+
+/* Global styles */
+html, body { 
+  height: 100%; 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
+
+.mat-elevation-z8 {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
+              0px 8px 10px 1px rgba(0, 0, 0, 0.14),
+              0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}

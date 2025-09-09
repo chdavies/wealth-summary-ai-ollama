@@ -16,7 +16,16 @@ static class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-       
+        // Add CORS for Angular development
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAngularDev", policy =>
+            {
+                policy.WithOrigins("http://localhost:4200")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+        });
 
         builder.Services.AddServices(builder.Configuration);
         builder.Services.AddInfrastructure(builder.Configuration);
@@ -30,6 +39,9 @@ static class Program
 
             app.UseSwagger();
             app.UseSwaggerUI();
+            
+            // Use CORS in development
+            app.UseCors("AllowAngularDev");
         }
 
         app.UseHttpsRedirection();
@@ -47,11 +59,24 @@ static class Program
         using var scope = serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<WealthDbContext>();
 
-        if (context.Database.GetPendingMigrations().Any())
+        try
         {
-            context.Database.Migrate();
+            // For demo with SQLite, just ensure database is created
+            context.Database.EnsureCreated();
+        }
+        catch (Exception ex)
+        {
+            // Log the error but continue - this is a demo
+            Console.WriteLine($"Database setup error (continuing anyway): {ex.Message}");
         }
 
-        await DatabaseSeeder.SeedAsync(context);
+        try
+        {
+            await DatabaseSeeder.SeedAsync(context);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Seeding error (continuing anyway): {ex.Message}");
+        }
     }
 }
