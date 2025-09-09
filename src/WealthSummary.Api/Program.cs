@@ -16,7 +16,16 @@ static class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-       
+        // Add CORS for Angular development
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAngularDev", policy =>
+            {
+                policy.WithOrigins("http://localhost:4200")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+        });
 
         builder.Services.AddServices(builder.Configuration);
         builder.Services.AddInfrastructure(builder.Configuration);
@@ -30,6 +39,9 @@ static class Program
 
             app.UseSwagger();
             app.UseSwaggerUI();
+            
+            // Use CORS in development
+            app.UseCors("AllowAngularDev");
         }
 
         app.UseHttpsRedirection();
