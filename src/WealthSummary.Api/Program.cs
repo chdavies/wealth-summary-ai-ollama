@@ -15,7 +15,6 @@ static class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        builder.Services.AddOpenApi();
 
        
 
@@ -27,7 +26,6 @@ static class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.MapOpenApi();
             await ApplyMigrationsAndSeed(app.Services);
 
             app.UseSwagger();
