@@ -5,7 +5,7 @@ namespace WealthSummary.Api.Application.Dtos
     public class ClientSummaryResponse
     {
         
-        public ClientSummary Wealth_Summary { get; set; } = new ClientSummary(); 
+        public ClientSummary Client_Summary { get; set; } = new ClientSummary(); 
 
         public List<string>? Caveats { get; set; }
 

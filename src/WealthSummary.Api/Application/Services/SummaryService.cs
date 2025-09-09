@@ -21,7 +21,7 @@ namespace WealthSummary.Api.Application.Services
             _config = config;
         }
 
-        public async Task<RawResponse?> BuildSummaryAsync(int clientId, CancellationToken cancellationToken = default)
+        public async Task<ClientSummaryResponse?> BuildSummaryAsync(int clientId, CancellationToken cancellationToken = default)
         {
             // Fetch Client Data
             var client = await _clientRepository.GetByIdAsync(clientId);
@@ -36,29 +36,25 @@ namespace WealthSummary.Api.Application.Services
             var useJsonFormat = _config.GetValue<bool?>("Ollama:UseJsonFormat") ?? true;
             var jsonText = await _ollama.GetStructuredSummaryAsync(systemPrompt, userPrompt, useJsonFormat, cancellationToken);
 
-            return new RawResponse
-            {
-                Content = jsonText
-            };
             // Parse and Return
-            //try
-            //{
-            //    var summary = JsonSerializer.Deserialize<ClientSummaryResponse>(jsonText, new JsonSerializerOptions
-            //    {
-            //        PropertyNameCaseInsensitive = true
-            //    });
+            try
+            {
+                var summary = JsonSerializer.Deserialize<ClientSummaryResponse>(jsonText, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
-            //    return summary;
-            //}
-            //catch
-            //{
-            //    // Fallback: Return as raw text if JSON parsing fails
-            //    return new ClientSummaryResponse
-            //    {
-            //        //ClientOverview = "Parsing failed; returning raw text in 'Caveats'",
-            //        Caveats = new List<string> { "Model did not return valid JSON.", "Raw output: " + Truncate(jsonText, 4000) }
-            //    };
-            //}
+                return summary;
+            }
+            catch
+            {
+                // Fallback: Return as raw text if JSON parsing fails
+                return new ClientSummaryResponse
+                {
+                    //ClientOverview = "Parsing failed; returning raw text in 'Caveats'",
+                    Caveats = new List<string> { "Model did not return valid JSON.", "Raw output: " + Truncate(jsonText, 4000) }
+                };
+            }
         }
 
         private static string Truncate(string input, int max)

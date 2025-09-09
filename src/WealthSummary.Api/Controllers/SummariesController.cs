@@ -16,7 +16,7 @@ namespace WealthSummary.Api.Controllers
         }
 
         [HttpGet("{clientId}")]
-        public async Task<ActionResult<RawResponse>> GetSummary(int clientId, CancellationToken ct)
+        public async Task<ActionResult<ClientSummaryResponse>> GetSummary(int clientId, CancellationToken ct)
         {
             var result = await _summaryService.BuildSummaryAsync(clientId, ct);
             if (result is null)
