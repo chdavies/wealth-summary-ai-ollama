@@ -1,7 +1,61 @@
 export interface ClientResponse {
   clientId: number;
-  name: string;
+  fullName: string;
   dateOfBirth: string;
+  maritalStatus: number;
+  assets?: Asset[];
+  liabilities?: Liability[];
+  meetingNotes?: MeetingNote[];
+  financialStatuses?: FinancialStatus[];
+  financialGoals?: FinancialGoal[];
+  pensions?: Pension[];
+}
+
+export interface Asset {
+  assetId: number;
+  clientId: number;
+  assetType: number;
+  description: string;
+  value: number;
+}
+
+export interface Liability {
+  liabilityId: number;
+  clientId: number;
+  liabilityType: number;
+  description: string;
+  value: number;
+}
+
+export interface MeetingNote {
+  meetingNoteId: number;
+  clientId: number;
+  meetingDate: string;
+  author: string;
+  notes: string;
+  createdAt: string;
+}
+
+export interface FinancialStatus {
+  financialStatusId: number;
+  clientId: number;
+  annualIncome: number;
+  annualExpenses: number;
+  riskAppetite: number;
+}
+
+export interface FinancialGoal {
+  financialGoalId: number;
+  clientId: number;
+  description: string;
+  targetDate: string;
+}
+
+export interface Pension {
+  pensionId: number;
+  clientId: number;
+  description: string;
+  value: number;
 }
 
 export interface ClientSummaryResponse {

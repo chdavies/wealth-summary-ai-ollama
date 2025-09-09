@@ -76,9 +76,29 @@ import { ClientResponse, ClientSummaryResponse } from '../models/client.model';
         <!-- Client Info -->
         <mat-card class="client-card">
           <mat-card-header>
-            <mat-card-title>{{ client.name }}</mat-card-title>
+            <mat-card-title>{{ client.fullName }}</mat-card-title>
             <mat-card-subtitle>Client ID: {{ client.clientId }} | DOB: {{ client.dateOfBirth | date:'shortDate' }}</mat-card-subtitle>
           </mat-card-header>
+          <mat-card-content *ngIf="client.assets || client.liabilities || client.financialStatuses">
+            <div class="client-overview-grid">
+              <div *ngIf="client.assets && client.assets.length > 0" class="overview-item">
+                <h4><mat-icon>account_balance_wallet</mat-icon> Assets ({{ client.assets.length }})</h4>
+                <p>Total: £{{ getTotalAssets() | number:'1.0-0' }}</p>
+              </div>
+              <div *ngIf="client.liabilities && client.liabilities.length > 0" class="overview-item">
+                <h4><mat-icon>credit_card</mat-icon> Liabilities ({{ client.liabilities.length }})</h4>
+                <p>Total: £{{ getTotalLiabilities() | number:'1.0-0' }}</p>
+              </div>
+              <div *ngIf="client.financialStatuses && client.financialStatuses.length > 0" class="overview-item">
+                <h4><mat-icon>trending_up</mat-icon> Annual Income</h4>
+                <p>£{{ client.financialStatuses[0].annualIncome | number:'1.0-0' }}</p>
+              </div>
+              <div *ngIf="client.pensions && client.pensions.length > 0" class="overview-item">
+                <h4><mat-icon>savings</mat-icon> Pensions</h4>
+                <p>£{{ getTotalPensions() | number:'1.0-0' }}</p>
+              </div>
+            </div>
+          </mat-card-content>
         </mat-card>
 
         <!-- Financial Position -->
@@ -222,13 +242,23 @@ import { ClientResponse, ClientSummaryResponse } from '../models/client.model';
       margin-top: 10px;
     }
 
-    .financial-item h4 {
+    .client-overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .financial-item h4, .overview-item h4 {
       margin: 0 0 10px 0;
       color: #3f51b5;
       font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .financial-item p {
+    .financial-item p, .overview-item p {
       margin: 0;
       line-height: 1.5;
     }
@@ -298,5 +328,17 @@ export class DashboardComponent {
         this.error = `Failed to generate summary: ${err.error?.message || err.message || 'Unknown error'}`;
       }
     });
+  }
+
+  getTotalAssets(): number {
+    return this.client?.assets?.reduce((total, asset) => total + asset.value, 0) || 0;
+  }
+
+  getTotalLiabilities(): number {
+    return this.client?.liabilities?.reduce((total, liability) => total + liability.value, 0) || 0;
+  }
+
+  getTotalPensions(): number {
+    return this.client?.pensions?.reduce((total, pension) => total + pension.value, 0) || 0;
   }
 }
